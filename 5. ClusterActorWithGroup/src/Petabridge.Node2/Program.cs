@@ -7,9 +7,8 @@ using Akka.Routing;
 using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Host;
 using Petabridge.Cmd.Remote;
-using Petabridge.Node;
 
-namespace Petabridge.App
+namespace Petabridge.Node
 {
     public class Program
     {
@@ -23,18 +22,7 @@ namespace Petabridge.App
             pbm.RegisterCommandPalette(RemoteCommands.Instance);
             pbm.Start(); // begin listening for PBM management commands
 
-
-            var pongActor = actorSystem.ActorOf(PongActor.Props()
-                .WithRouter(FromConfig.Instance)
-                .WithDispatcher("single-dispatcher")
-                , nameof(PongActor));
-
-            while (true)
-            {
-                for(int i = 0; i < 10; i++)
-                    pongActor.Tell("hello");
-                await Task.Delay(5000);
-            }
+            actorSystem.ActorOf(PongActor.Props().WithRouter(FromConfig.Instance), nameof(PongActor));
 
             await actorSystem.WhenTerminated;
         }

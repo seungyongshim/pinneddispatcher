@@ -21,7 +21,7 @@ namespace Petabridge.Node
                     log.Error("Not Same Thread on Actor!!!");
                 }
 
-                log.Info($"Hello World {Count}");
+                log.Info($"Hello World {Count} {Sender.Path}");
                 Last = Thread.CurrentThread.ManagedThreadId;
                 
             });

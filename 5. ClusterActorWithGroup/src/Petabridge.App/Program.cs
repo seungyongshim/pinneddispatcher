@@ -24,16 +24,16 @@ namespace Petabridge.App
             pbm.Start(); // begin listening for PBM management commands
 
 
-            var pongActor = actorSystem.ActorOf(PongActor.Props()
-                .WithRouter(FromConfig.Instance)
+            var pongActor = actorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance)
                 .WithDispatcher("single-dispatcher")
-                , nameof(PongActor));
+                , "PongActorGroup");
 
             while (true)
             {
                 for(int i = 0; i < 10; i++)
                     pongActor.Tell("hello");
                 await Task.Delay(5000);
+                actorSystem.Log.Info("Sending...");
             }
 
             await actorSystem.WhenTerminated;
