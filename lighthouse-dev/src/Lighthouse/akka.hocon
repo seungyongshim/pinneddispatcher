@@ -1,3 +1,7 @@
+lighthouse{
+  actorsystem: "ClusterSystem" #POPULATE NAME OF YOUR ACTOR SYSTEM HERE
+}
+
 # See petabridge.cmd configuration options here: https://cmd.petabridge.com/articles/install/host-configuration.html
 petabridge.cmd{
 	# default IP address used to listen for incoming petabridge.cmd client connections
@@ -5,30 +9,30 @@ petabridge.cmd{
 	host = "0.0.0.0"
 
 	# default port number used to listen for incoming petabridge.cmd client connections
-	port = 9110
+	port = 9100
 }
 
 akka {
   actor {
-    provider = local
-
-    deployment {
-      /PongActor {
-        router = smallest-mailbox-pool
-        nr-of-instances = 10
-        pool-dispatcher {
-          type = PinnedDispatcher
-        }
-	  }
-	}
-    
+    provider = cluster
   }
   
   remote {
+    log-remote-lifecycle-events = DEBUG
     dot-netty.tcp {
+      transport-class = "Akka.Remote.Transport.DotNetty.TcpTransport, Akka.Remote"
+      applied-adapters = []
+      transport-protocol = tcp
+      #will be populated with a dynamic host-name at runtime if left uncommented
       public-hostname = "localhost"
       hostname = "0.0.0.0"
-      port = 4055
+      port = 4053
     }
   }            
+
+  cluster {
+    #will inject this node as a self-seed node at run-time
+    seed-nodes = [] 
+    roles = [lighthouse]
+  }
 }
